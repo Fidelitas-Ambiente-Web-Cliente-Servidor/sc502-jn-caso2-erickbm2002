@@ -12,22 +12,19 @@ $page = $_GET['page'] ?? 'login';
 
 // ========== RUTAS GET OBTENER DATOS ==========
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-
+    $option = $_GET['option'] ?? '';
     // Obtener listado de talleres
-    if ($_GET['option'] ?? "" == "talleres_json") {
+    if ($option === "talleres_json") {
         $taller = new TallerController();
         $taller->getTalleresJson();
         exit;
-    }
-
-    // Obtener solicitudes pendientes
-    if ($_GET['option'] ?? "" == "solicitudes_json") {
+        // Obtener solicitudes pendientes
+    } elseif ($option === "solicitudes_json") {
         $admin = new AdminController();
-        //$admin->getSolicitudesJson();
+        $admin->getSolicitudesJson();
         exit;
-    }
+  }
 }
-
 // ========== RUTAS FORMULARIO POST ==========
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 

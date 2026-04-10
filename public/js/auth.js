@@ -1,5 +1,6 @@
 $(function () {
     let formLogin = $("#formLogin");
+    let btnLogout = $('#btnLogout');
     const urlBase = "index.php"
 
     formLogin.on("submit", function (event) {
@@ -29,5 +30,13 @@ $(function () {
         }
     })
 
+    btnLogout.on("click", () => {
+        fetch(urlBase + '?page=logout')
+            .then(response => response.json())
+            .then(data => {
+                if (data.response == "00") return window.location = urlBase + '?page=login'
+                alert(data.mensaje)
+        })
+    })
 
 })

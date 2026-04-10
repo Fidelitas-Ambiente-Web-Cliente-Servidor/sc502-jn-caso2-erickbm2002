@@ -58,7 +58,7 @@ class UserController
     }
 
     public function logout()
-    {
+    {   
         session_destroy();
         echo json_encode(['response' => "00", 'message' => "Sesión cerrada"]);
     }
