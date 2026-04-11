@@ -31,18 +31,19 @@ class Solicitud
         $query = "SELECT s.id, t.descripcion, u.username, s.fecha_solicitud
               FROM solicitudes AS s
               JOIN talleres AS t ON t.id = s.taller_id
-              JOIN usuarios AS u ON u.id = s.usuario_id;";
+              JOIN usuarios AS u ON u.id = s.usuario_id
+              WHERE s.estado = 'pendiente'";
         $stmt = $this->conn->prepare($query);
         $stmt->execute();
         $result = $stmt->get_result();
 
-        $solicitudes = []; // <--- Inicializa siempre el array
+        $solicitudes = []; 
         while ($row = $result->fetch_assoc()) {
             $solicitudes[] = $row;
         }
         return $solicitudes;
     }
-
+    
     public function actualizarEstado($id, $estado)
     {
         $query = "UPDATE solicitudes SET estado = ? WHERE id = ?";

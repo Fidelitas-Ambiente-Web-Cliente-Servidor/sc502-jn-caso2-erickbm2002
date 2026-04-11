@@ -60,7 +60,8 @@ class TallerController
             //2 -> aprobado
             case 0:
                 $response["response"] = "00";
-                $response["mensaje"] = "Curso Registrado correctamente";
+                $response["mensaje"] = "Curso Solicitado correctamente.
+                Debe esperar la respuesta de la solicitud";
                 break;
             case 1:
                 $response["response"] = "01";
@@ -78,7 +79,6 @@ class TallerController
         };
         if($response['response'] == "00") {
             $this->solicitudModel->create($usuarioId, $tallerId);
-            $this->tallerModel->descontarCupo($tallerId);
             $datosActualizados = $this->tallerModel->getById($tallerId);
             $response['data'] = [
                 "cupo_disponible" => $datosActualizados["cupo_disponible"]

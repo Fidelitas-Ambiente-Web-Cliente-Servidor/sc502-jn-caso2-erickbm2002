@@ -1,0 +1,36 @@
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+
+.nav-contenedor { 
+   display: flex;
+   margin-block: 10px;
+   gap: 10px;
+}
+
+.nav-item {
+    background-color: rgb(245, 245, 220);
+    padding: 20px;
+    border-radius: 10px;
+}
+
+
+.nav-item:hover {
+    background-color: rgba(245, 245, 220,0.5);
+}
+
+.nav-contenedor-sesion {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}

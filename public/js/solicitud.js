@@ -39,7 +39,7 @@ const solicitarCurso = (fila) => {
         body: datos
     })
     .then(response => response.json())
-    .then(data => {
+        .then(data => {
         if (data.response == "00") {
             actualizarCuposDiponibles(fila, data.data["cupo_disponible"]);
         } 
@@ -54,6 +54,9 @@ const actualizarCuposDiponibles = (fila,datoNuevo) =>  {
 
 const cargarSolicitudes = (data) => { 
     let bodyTabla = $('#solicitudes-body');
+    let spanSolicitudesVacias = $('#sin-solicitudes');
+    if (!data) return spanSolicitudesVacias.text("Sin solicitudes");
+    
     data.forEach(solicitud => {
         const filaNueva = `
 <tr>
@@ -61,7 +64,7 @@ const cargarSolicitudes = (data) => {
     <td>${solicitud.descripcion}</td>
     <td>${solicitud.username}</td>
     <td>${solicitud.fecha_solicitud}</td>
-    <td>---</td> <td>
+    <td>
         <div>
             <button class="btn-aprobar" data-id="${solicitud.id}">Aprobar</button>
             <button class="btn-rechazar" data-id="${solicitud.id}">Rechazar</button>
@@ -84,11 +87,14 @@ const procesarSolicitud = (id, accion, fila) => {
         body: datos
     })
     .then(response => response.json())
-    .then(data => {
-        if (data.success) {
+        .then(data => {
+        console.log("vamos bien")
+            if (data.success) {
+            console.log("vamos bien 2")
             alert(data.mensaje);
             fila.remove(); 
         } else {
+            console.log("entre mal ")
             alert("Error: " + data.error);
         }
     });

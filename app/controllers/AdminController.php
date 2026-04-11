@@ -1,5 +1,7 @@
 <?php
 
+use function PHPSTORM_META\type;
+
 require_once __DIR__ . '/../../config/database.php';
 require_once __DIR__ . '/../models/Solicitud.php';
 require_once __DIR__ . '/../models/Taller.php';
@@ -60,7 +62,16 @@ class AdminController
 
         $solicitudId = $_POST['id_solicitud'] ?? 0;
 
+        $solicitud = $this->solicitudModel->getById($solicitudId);
+        $tallerId = $solicitud["taller_id"];
+        $cuposDisponibles = $this->tallerModel->getById($tallerId);
+        if ($cuposDisponibles['cupo_disponible'] == 0) {
+            $this->rechazar(true);
+            exit();
+        }
+        
         if ($this->solicitudModel->actualizarEstado($solicitudId, 'aprobada')) {
+            $this->tallerModel->descontarCupo($tallerId);
             echo json_encode(['success' => true, 'mensaje' => 'Solicitud aprobada']);
         } else {
             echo json_encode(['success' => false, 'error' => 'No se pudo aprobar']);
@@ -68,7 +79,7 @@ class AdminController
         exit();
     }
 
-    public function rechazar()
+    public function rechazar($cuposLimitesAlcanzados = false)
     {
         if (!isset($_SESSION['id']) || $_SESSION['rol'] !== 'admin') {
             echo json_encode(['success' => false, 'error' => 'No autorizado']);
@@ -77,18 +88,22 @@ class AdminController
 
         $solicitudId = $_POST['id_solicitud'] ?? 0;
         $solicitud = $this->solicitudModel->getById($solicitudId);
-
-        if ($solicitud) {
-            if ($this->solicitudModel->actualizarEstado($solicitudId, 'rechazada')) {
-                // 3. Sumar el cupo de nuevo al taller
-                $this->tallerModel->sumarCupo($solicitud['taller_id']);
-                echo json_encode(['success' => true, 'mensaje' => 'Solicitud rechazada y cupo devuelto']);
-            } else {
-                echo json_encode(['success' => false, 'error' => 'Error al actualizar estado']);
-            }
-        } else {
+        $seActualizo = $this->solicitudModel->actualizarEstado($solicitudId, 'rechazada');
+        if(!$solicitud) {
             echo json_encode(['success' => false, 'error' => 'Solicitud no encontrada']);
+            exit();
+        }
+        if(!$seActualizo) {
+            echo json_encode(['success' => false, 'error' => 'Error al actualizar estado']);
+        }
+        if($seActualizo && $cuposLimitesAlcanzados == false) {
+            echo json_encode(['success' => true, 'mensaje' => 'Solicitud rechazada']);
+            
+        }
+        if($seActualizo && $cuposLimitesAlcanzados) {
+            echo json_encode(['success' => true, 'mensaje' => 'Solicitud rechazada cupos no disponibles']);
         }
         exit();
+        
     }
 }
